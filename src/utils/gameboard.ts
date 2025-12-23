@@ -1,4 +1,4 @@
-import type { Ship } from "./ship";
+import { Ship } from "./ship";
 
 export interface Position {
   x: number;
@@ -7,25 +7,32 @@ export interface Position {
 
 export type Orientation = "horizontal" | "vertical";
 
-type Board = number[][];
+export enum Outcome {
+  MISS,
+  HIT,
+  UNAVAILABLE,
+}
+
+interface Cell {
+  type: "ship" | "empty" | "miss" | "hit";
+  value?: Ship;
+}
+
+type Board = Cell[][];
 
 export class Gameboard {
   private _board: Board;
+  private _ship_cell_count = 0;
+  private _hit_cell_count = 0;
 
   constructor(readonly board_size: number = 10) {
     this._board = Array.from({ length: board_size }, () =>
-      Array(board_size).fill(0)
+      Array(board_size).fill({ type: "empty" })
     );
   }
 
   get board() {
     return this._board;
-  }
-
-  private toggle_cell(position: Position) {
-    this._board[position.y][position.x] += this._board[position.y][position.x]
-      ? -1
-      : 1;
   }
 
   placeShip(ship: Ship, position: Position, orientation: Orientation) {
@@ -41,8 +48,37 @@ export class Gameboard {
     for (let i = 0; i < ship.length; i++) {
       const x = orientation === "horizontal" ? position.x + i : position.x;
       const y = orientation === "vertical" ? position.y + i : position.y;
-      this.toggle_cell({ x, y });
+
+      if (this._board[y][x].type === "ship") return false;
+    }
+
+    for (let i = 0; i < ship.length; i++) {
+      const x = orientation === "horizontal" ? position.x + i : position.x;
+      const y = orientation === "vertical" ? position.y + i : position.y;
+
+      this._ship_cell_count += ship.length;
+      this._board[y][x] = { type: "ship", value: ship };
     }
     return true;
+  }
+
+  receiveAttack(position: Position) {
+    const cell = this._board[position.y][position.x];
+
+    if (cell.type === "ship") {
+      cell.value!.hit();
+      this._board[position.y][position.x] = { type: "hit" };
+      this._hit_cell_count++;
+      return Outcome.HIT;
+    }
+    else if (cell.type === "empty") {
+      this._board[position.y][position.x] = {type: "miss"}
+      return Outcome.MISS
+    }
+    else return Outcome.UNAVAILABLE
+  }
+
+  allShipsSunk() {
+    return this._ship_cell_count <= this._hit_cell_count;
   }
 }
