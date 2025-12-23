@@ -1,11 +1,4 @@
-export interface ShipSchema {
-  length: number;
-  hits: number;
-  hit(): void;
-  isSunk(): boolean;
-}
-
-export class Ship implements ShipSchema {
+export class Ship {
   private _hits = 0
   constructor(private readonly _length: number) {}
 

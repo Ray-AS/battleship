@@ -9,6 +9,7 @@ export class Player {
     this.populate();
   }
 
+  // Just pre-populate ships for now; will add placement functionality later
   populate() {
     for(let i = 0; i < SHIP_LENGTHS.length; i++) {
       const result = this.gameboard.placeShip(SHIP_LENGTHS[i], {x: i, y: 0}, "vertical")

@@ -22,12 +22,11 @@ type Board = Cell[][];
 
 export class Gameboard {
   private _board: Board;
-  private _ship_cell_count = 0;
-  private _hit_cell_count = 0;
+  private _ships: Ship[] = [];
 
   constructor(readonly board_size: number = 10) {
     this._board = Array.from({ length: board_size }, () =>
-      Array(board_size).fill({ type: "empty" })
+      Array.from({ length: board_size }, () => ({ type: "empty" } as const))
     );
   }
 
@@ -38,14 +37,15 @@ export class Gameboard {
   placeShip(length: number, position: Position, orientation: Orientation) {
     if (
       position.x < 0 ||
-      position.x + length > this.board_size ||
       position.y < 0 ||
-      position.y + length > this.board_size
+      (orientation === "horizontal" && position.x + length > this.board_size) ||
+      (orientation === "vertical" && position.y + length > this.board_size)
     ) {
       return false;
     }
 
     const ship = new Ship(length);
+    this._ships.push(ship);
 
     for (let i = 0; i < ship.length; i++) {
       const x = orientation === "horizontal" ? position.x + i : position.x;
@@ -58,29 +58,35 @@ export class Gameboard {
       const x = orientation === "horizontal" ? position.x + i : position.x;
       const y = orientation === "vertical" ? position.y + i : position.y;
 
-      this._ship_cell_count += ship.length;
       this._board[y][x] = { type: "ship", value: ship };
     }
+
     return true;
   }
 
   receiveAttack(position: Position) {
+    if (
+      position.x < 0 ||
+      position.y < 0 ||
+      position.x > this.board_size ||
+      position.y > this.board_size
+    ) {
+      return Outcome.UNAVAILABLE;
+    }
+
     const cell = this._board[position.y][position.x];
 
     if (cell.type === "ship") {
+      cell.type = "hit";
       cell.value!.hit();
-      this._board[position.y][position.x] = { type: "hit" };
-      this._hit_cell_count++;
       return Outcome.HIT;
-    }
-    else if (cell.type === "empty") {
-      this._board[position.y][position.x] = {type: "miss"}
-      return Outcome.MISS
-    }
-    else return Outcome.UNAVAILABLE
+    } else if (cell.type === "empty") {
+      cell.type = "miss";
+      return Outcome.MISS;
+    } else return Outcome.UNAVAILABLE;
   }
 
   allShipsSunk() {
-    return this._ship_cell_count <= this._hit_cell_count;
+    return this._ships.every((ship) => ship.isSunk());
   }
 }

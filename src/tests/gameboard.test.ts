@@ -26,23 +26,25 @@ describe("Gameboard class", () => {
     expect(gameboard).toBeDefined();
   });
 
-  test("should place ship on board", () => {
-    const gameboard = new Gameboard();
-    const testLength = 3;
-    const testPosition: Position = { x: 1, y: 1 };
-    const testOrientation: Orientation = "horizontal";
-    const result = gameboard.placeShip(testLength, testPosition, testOrientation);
-
-    expect(result).toBe(true);
-    expect(
-      checkBoardValues(
-        gameboard,
-        testPosition,
+  test.each(["horizontal", "vertical"] as Orientation[])(
+    `should place ship on board %sly`,
+    (orientation) => {
+      const gameboard = new Gameboard();
+      const testLength = 3;
+      const testPosition: Position = { x: 1, y: 1 };
+      const testOrientation: Orientation = orientation;
+      const result = gameboard.placeShip(
         testLength,
+        testPosition,
         testOrientation
-      )
-    ).toBe(true);
-  });
+      );
+
+      expect(result).toBe(true);
+      expect(
+        checkBoardValues(gameboard, testPosition, testLength, testOrientation)
+      ).toBe(true);
+    }
+  );
 
   test("should not place ship out-of-bounds on board", () => {
     const gameboard = new Gameboard();
@@ -66,6 +68,7 @@ describe("Gameboard class", () => {
     const result = gameboard.receiveAttack(testPosition);
 
     expect(result).toBe(Outcome.HIT);
+    expect(gameboard.board[1][1].type).toBe("hit");
   });
 
   test("should miss", () => {
@@ -83,13 +86,11 @@ describe("Gameboard class", () => {
     expect(result).toBe(Outcome.UNAVAILABLE);
   });
 
-  test("should report all ships sunk", () => {
+  test("should not accept out-of-bounds position", () => {
     const gameboard = new Gameboard();
-    const testPosition: Position = { x: 1, y: 1 };
-    gameboard.placeShip(1, testPosition, "vertical");
-    gameboard.receiveAttack(testPosition);
+    const result = gameboard.receiveAttack({ x: -1, y: -1 });
 
-    expect(gameboard.allShipsSunk()).toBe(true);
+    expect(result).toBe(Outcome.UNAVAILABLE);
   });
 
   test("should not report all ships sunk", () => {
@@ -98,5 +99,27 @@ describe("Gameboard class", () => {
     gameboard.placeShip(1, testPosition, "vertical");
 
     expect(gameboard.allShipsSunk()).toBe(false);
+  });
+
+  test("should report all ships sunk (one ship)", () => {
+    const gameboard = new Gameboard();
+    const testPosition: Position = { x: 1, y: 1 };
+    gameboard.placeShip(1, testPosition, "vertical");
+    gameboard.receiveAttack(testPosition);
+
+    expect(gameboard.allShipsSunk()).toBe(true);
+  });
+
+  test("should report all ships sunk (multiple ships)", () => {
+    const gameboard = new Gameboard();
+    gameboard.placeShip(1, { x: 1, y: 1 }, "vertical");
+    gameboard.placeShip(2, { x: 2, y: 2 }, "horizontal");
+
+    gameboard.receiveAttack({ x: 1, y: 1 });
+    expect(gameboard.allShipsSunk()).toBe(false);
+
+    gameboard.receiveAttack({ x: 2, y: 2 });
+    gameboard.receiveAttack({ x: 3, y: 2 });
+    expect(gameboard.allShipsSunk()).toBe(true);
   });
 });
