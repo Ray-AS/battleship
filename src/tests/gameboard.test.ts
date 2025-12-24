@@ -1,10 +1,10 @@
 import { expect, test, describe } from "vitest";
 import {
-  Gameboard,
   Outcome,
   type Position,
   type Orientation,
-} from "../utils/gameboard.ts";
+} from "../models";
+import { Gameboard } from "../utils/gameboard";
 
 describe("Gameboard class", () => {
   function checkBoardValues(

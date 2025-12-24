@@ -1,25 +1,6 @@
-import { DEFAULT_BOARD_SIZE } from "../configs/board.configs";
+import { DEFAULT_BOARD_SIZE } from "../configs";
+import { Outcome, type Board, type Orientation, type Position } from "../models";
 import { Ship } from "./ship";
-
-export interface Position {
-  x: number;
-  y: number;
-}
-
-export type Orientation = "horizontal" | "vertical";
-
-export enum Outcome {
-  MISS,
-  HIT,
-  UNAVAILABLE,
-}
-
-interface Cell {
-  type: "ship" | "empty" | "miss" | "hit";
-  value?: Ship;
-}
-
-type Board = Cell[][];
 
 export class Gameboard {
   private _board: Board;

@@ -1,17 +1,20 @@
 import "../styles/board.css"
-import type { ReactNode } from "react";
-import { DEFAULT_BOARD_SIZE } from "../configs/board.configs";
 import Cell from "./Cell";
+import { type Board } from "../models"
 
-export default function Board() {
-  const board: ReactNode[][] = [];
-  for (let i = 0; i < DEFAULT_BOARD_SIZE; i++) {
-    const row: ReactNode[] = [];
-    for (let j = 0; j < DEFAULT_BOARD_SIZE; j++) {
-      row.push(<Cell />);
+interface boardProps {
+  board: Board
+}
+
+export default function Board({ board }: boardProps) {
+  const display_board = [];
+  for (let i = 0; i < board.length; i++) {
+    const row = [];
+    for (let j = 0; j < board[i].length; j++) {
+      row.push(<Cell state={board[i][j].type} />);
     }
-    board.push(row);
+    display_board.push(row);
   }
 
-  return <div className="board">{board}</div>;
+  return <div className="board">{display_board}</div>;
 }
