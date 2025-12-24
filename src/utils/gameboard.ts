@@ -1,3 +1,4 @@
+import { DEFAULT_BOARD_SIZE } from "../configs/board.configs";
 import { Ship } from "./ship";
 
 export interface Position {
@@ -24,7 +25,7 @@ export class Gameboard {
   private _board: Board;
   private _ships: Ship[] = [];
 
-  constructor(readonly board_size: number = 10) {
+  constructor(readonly board_size: number = DEFAULT_BOARD_SIZE) {
     this._board = Array.from({ length: board_size }, () =>
       Array.from({ length: board_size }, () => ({ type: "empty" } as const))
     );
