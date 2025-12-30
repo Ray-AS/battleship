@@ -7,14 +7,13 @@ import type { PlayerType } from "./models";
 import { PlayerContext } from "./components/PlayerContext";
 
 function App() {
-  // Create single instance of player classes (i.e. don't remake on re-renders)
+  // Create single instance of player/computer classes (i.e. don't remake on re-renders)
   const [player] = useState(() => new Player());
   const [computer] = useState(() => new Computer());
-
   const [currentPlayer, setCurrentPlayer] = useState<PlayerType>("None");
+
   const [gameOver, setGameOver] = useState(true);
   const [winner, setWinner] = useState<PlayerType>("None");
-
   const [turnCount, setTurnCount] = useState(0);
 
   function handleGameOver(loser: PlayerType) {
@@ -48,8 +47,12 @@ function App() {
     setCurrentPlayer(startingPlayer);
   }
 
+  // Handle computer attacks and updates in computer class
+  // useEffect to ensure no infinite loops or unexpected behavior
+  // TODO: refactor and remove useEffect (i.e. have React hold the board state itself)
   useEffect(() => {
     if (currentPlayer === "Computer" && !gameOver) {
+      // Short delay for computer attacks to make ui updates and gameplay feel smoother
       const timer = setTimeout(() => {
         const cellToAttack = computer.chooseAttack();
         console.log(

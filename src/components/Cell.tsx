@@ -31,7 +31,6 @@ export default function Cell({ state, position, disabled, hide, attack }: cellPr
       break;
   }
 
-  // console.log(position)
   return (
     <button
       className="cell"

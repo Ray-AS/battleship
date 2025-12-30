@@ -7,6 +7,7 @@ export class Gameboard {
   private _ships: Ship[] = [];
 
   constructor(readonly board_size: number = DEFAULT_BOARD_SIZE) {
+    // Initialize an empty board
     this._board = Array.from({ length: board_size }, () =>
       Array.from({ length: board_size }, () => ({ type: "empty" } as const))
     );
@@ -17,6 +18,7 @@ export class Gameboard {
   }
 
   placeShip(length: number, position: Position, orientation: Orientation) {
+    // Ensure placement is not out of bounds
     if (
       position.x < 0 ||
       position.y < 0 ||
@@ -29,6 +31,7 @@ export class Gameboard {
     const ship = new Ship(length);
     this._ships.push(ship);
 
+    // Ensure ship is not already placed at this location
     for (let i = 0; i < ship.length; i++) {
       const x = orientation === "horizontal" ? position.x + i : position.x;
       const y = orientation === "vertical" ? position.y + i : position.y;
@@ -47,6 +50,7 @@ export class Gameboard {
   }
 
   receiveAttack(position: Position) {
+    // Prevent out of bounds attacks
     if (
       position.x < 0 ||
       position.y < 0 ||

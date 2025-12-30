@@ -28,6 +28,7 @@ export default function Board({
       handleAllSunk(player);
       return;
     }
+
     setCurrentPlayer("Computer");
   }
 

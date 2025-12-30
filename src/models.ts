@@ -12,11 +12,6 @@ interface Cell {
   value?: Ship;
 }
 
-export interface DisplayCell extends Cell {
-  x: number;
-  y: number;
-}
-
 export type Board = Cell[][];
 
 export type cellState = "ship" | "empty" | "miss" | "hit";

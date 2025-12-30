@@ -3,10 +3,12 @@ import type { Position } from "../models";
 import { Player } from "./player";
 
 export class Computer extends Player {
+  // Keep track of previously hit positions to ensure no repetition
   constructor(private prevHit: Position[] = []) {
     super();
   }
 
+  // Random attack choosing for now (TODO: implement smarter algorithm)
   chooseAttack(): Position {
     if (this.prevHit.length >= DEFAULT_BOARD_SIZE**2) {
       throw new Error("All positions exhausted");
