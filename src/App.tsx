@@ -13,6 +13,14 @@ function App() {
 
   const [currentPlayer, setCurrentPlayer] = useState<PlayerType>("Player")
 
+  if (currentPlayer === "Computer") {
+    const cellToAttack = computer.chooseAttack();
+    console.log(`Computer attacking (${cellToAttack.x}, ${cellToAttack.y})`);
+    player.gameboard.receiveAttack(cellToAttack);
+
+    setCurrentPlayer("Player");
+  }
+
   function handleGameOver(player: PlayerType) {
     if (player === "Player") {
       console.log("Player loses!");
