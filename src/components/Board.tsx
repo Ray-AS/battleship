@@ -21,7 +21,7 @@ export default function Board({
 
   // Update board instance and board state based on attacked cell position
   function attack(position: Position) {
-    console.log(`Player attacking (${position.x}, ${position.y})`);
+    console.log(`${player} attacking (${position.x}, ${position.y})`);
     boardInstance.receiveAttack(position);
 
     // Create deep copy of updated board instance
