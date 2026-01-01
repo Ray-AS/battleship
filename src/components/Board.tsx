@@ -1,6 +1,6 @@
 import "../styles/board.css";
 import Cell from "./Cell";
-import { type Board, type PlayerType, type Position } from "../models";
+import { Outcome, type Board, type PlayerType, type Position } from "../models";
 import type { Gameboard } from "../utils/gameboard";
 import { useContext } from "react";
 import { PlayerContext } from "./PlayerContext";
@@ -22,14 +22,15 @@ export default function Board({
   // Update board instance and board state based on attacked cell position
   function attack(position: Position) {
     console.log(`Player attacking (${position.x}, ${position.y})`);
-    boardInstance.receiveAttack(position);
+    const outcome = boardInstance.receiveAttack(position);
+
+    if (outcome === Outcome.UNAVAILABLE) return;
 
     if (boardInstance.allShipsSunk()) {
-      handleAllSunk(player);
-      return;
+    handleAllSunk(player);
+    } else {
+      setCurrentPlayer("Computer");
     }
-
-    setCurrentPlayer("Computer");
   }
 
   // Iterate over board to create a 2-D array of cells to display

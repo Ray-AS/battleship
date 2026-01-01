@@ -1,5 +1,5 @@
 import { DEFAULT_BOARD_SIZE } from "../configs";
-import { Outcome, type Board, type Orientation, type Position } from "../models";
+import { Outcome, type Board, type BoardFunction, type Position } from "../models";
 import { Ship } from "./ship";
 
 export class Gameboard {
@@ -17,8 +17,8 @@ export class Gameboard {
     return this._board;
   }
 
-  placeShip(length: number, position: Position, orientation: Orientation) {
-    // Ensure placement is not out of bounds
+  // Ensure placement is not out of bounds
+  isInBounds: BoardFunction = (length, position, orientation) => {
     if (
       position.x < 0 ||
       position.y < 0 ||
@@ -27,17 +27,26 @@ export class Gameboard {
     ) {
       return false;
     }
-
-    const ship = new Ship(length);
-    this._ships.push(ship);
-
-    // Ensure ship is not already placed at this location
-    for (let i = 0; i < ship.length; i++) {
+    return true;
+  }
+  
+  // Ensure ship is not already placed at this location
+  isOccupied: BoardFunction = (length, position, orientation) => {
+    for (let i = 0; i < length; i++) {
       const x = orientation === "horizontal" ? position.x + i : position.x;
       const y = orientation === "vertical" ? position.y + i : position.y;
 
       if (this._board[y][x].type === "ship") return false;
     }
+    return true;
+  }
+
+  placeShip: BoardFunction = (length, position, orientation) => {
+    if (!this.isInBounds(length, position, orientation)) return false;
+    if (!this.isOccupied(length, position, orientation)) return false;
+
+    const ship = new Ship(length);
+    this._ships.push(ship);
 
     for (let i = 0; i < ship.length; i++) {
       const x = orientation === "horizontal" ? position.x + i : position.x;
@@ -54,8 +63,8 @@ export class Gameboard {
     if (
       position.x < 0 ||
       position.y < 0 ||
-      position.x > this.board_size ||
-      position.y > this.board_size
+      position.x >= this.board_size ||
+      position.y >= this.board_size
     ) {
       return Outcome.UNAVAILABLE;
     }

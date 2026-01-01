@@ -3,18 +3,48 @@ import Board from "./components/Board";
 import { Player } from "./utils/player";
 import { Computer } from "./utils/computer";
 import { useEffect, useState } from "react";
-import type { PlayerType } from "./models";
+import type { PlayerType, GamePhase } from "./models";
 import { PlayerContext } from "./components/PlayerContext";
 
 function App() {
   // Create single instance of player/computer classes (i.e. don't remake on re-renders)
   const [player] = useState(() => new Player());
   const [computer] = useState(() => new Computer());
-  const [currentPlayer, setCurrentPlayer] = useState<PlayerType>("None");
 
-  const [gameOver, setGameOver] = useState(true);
+  const [currentPlayer, setCurrentPlayer] = useState<PlayerType>("None");
   const [winner, setWinner] = useState<PlayerType>("None");
-  const [turnCount, setTurnCount] = useState(0);
+
+  const [phase, setPhase] = useState<GamePhase>("setup");
+  const [refreshTrigger, setRefreshTrigger] = useState(0);
+
+  function startGame() {
+    console.log("Starting game");
+
+    computer.gameboard.clear();
+    computer.randomPopulate();
+
+    if (player.gameboard.allShipsSunk()) {
+      player.randomPopulate();
+    }
+
+    const playerTypes: PlayerType[] = ["Player", "Computer"];
+    const startingPlayer =
+      playerTypes[Math.floor(Math.random() * playerTypes.length)];
+
+    setWinner("None");
+    setRefreshTrigger(0);
+    setCurrentPlayer(startingPlayer);
+    setPhase("playing");
+  }
+
+  function randomizePlayerBoard() {
+    if (phase !== "setup") return;
+
+    player.gameboard.clear();
+    player.randomPopulate();
+
+    setRefreshTrigger((prev) => prev + 1);
+  }
 
   function handleGameOver(loser: PlayerType) {
     if (loser === "Player") {
@@ -26,32 +56,14 @@ function App() {
     }
 
     setCurrentPlayer("None");
-    setGameOver(true);
-  }
-
-  function init() {
-    console.log("Starting game");
-
-    player.gameboard.clear();
-    computer.gameboard.clear();
-    player.populate();
-    computer.populate();
-
-    const playerTypes: PlayerType[] = ["Player", "Computer"];
-    const startingPlayer =
-      playerTypes[Math.floor(Math.random() * playerTypes.length)];
-
-    setGameOver(false);
-    setWinner("None");
-    setTurnCount(0);
-    setCurrentPlayer(startingPlayer);
+    setPhase("ended");
   }
 
   // Handle computer attacks and updates in computer class
   // useEffect to ensure no infinite loops or unexpected behavior
   // TODO: refactor and remove useEffect (i.e. have React hold the board state itself)
   useEffect(() => {
-    if (currentPlayer === "Computer" && !gameOver) {
+    if (phase === "playing" && currentPlayer === "Computer") {
       // Short delay for computer attacks to make ui updates and gameplay feel smoother
       const timer = setTimeout(() => {
         const cellToAttack = computer.chooseAttack();
@@ -60,7 +72,7 @@ function App() {
         );
         player.gameboard.receiveAttack(cellToAttack);
 
-        setTurnCount((prev) => prev + 1);
+        setRefreshTrigger((prev) => prev + 1);
 
         if (player.gameboard.allShipsSunk()) {
           handleGameOver("Player");
@@ -71,29 +83,46 @@ function App() {
 
       return () => clearTimeout(timer);
     }
-  }, [currentPlayer, gameOver, player, computer]); // Depends really on currentPlayer; others just to ensure no misbehavior
+  }, [currentPlayer, phase, player, computer]); // Depends really on currentPlayer; others just to ensure no misbehavior
 
+  console.log(refreshTrigger);
+  // Add styling to highlight whose turn it is
   return (
     <>
       <header>
         <h1>Battleship</h1>
-        <button className="start" disabled={!gameOver} onClick={() => init()}>
-          {gameOver ? "Start Game" : `Turn : ${turnCount}`}
-        </button>
-        {(gameOver && winner !== "None" ? (<h3>The {winner} wins!</h3>) : null)}
+        {phase === "setup" && (
+          <div>
+            <button onClick={randomizePlayerBoard}>Randomize Ships</button>
+            <button onClick={startGame}>Start Game</button>
+          </div>
+        )}
+        {/* {phase === "playing" && <span>Turn: {turnCount}</span>} */}
+        {phase === "ended" && (
+          <>
+            <h3>The {winner} wins!</h3>
+            <button onClick={() => setPhase("setup")}>New Game</button>
+          </>
+        )}
       </header>
       <section className="boards-container">
         <PlayerContext.Provider value={{ currentPlayer, setCurrentPlayer }}>
-          <Board
-            player={gameOver ? "None" : "Player"}
-            boardInstance={player.gameboard}
-            handleAllSunk={handleGameOver}
-          />
-          <Board
-            player={gameOver ? "None" : "Computer"}
-            boardInstance={computer.gameboard}
-            handleAllSunk={handleGameOver}
-          />
+          <div className={currentPlayer === "Player" ? "active-board" : ""}>
+            <h3>Your Fleet</h3>
+            <Board
+              player={phase === "playing" ? "Player" : "None"}
+              boardInstance={player.gameboard}
+              handleAllSunk={handleGameOver}
+            />
+          </div>
+          <div className={currentPlayer === "Computer" ? "active-board" : ""}>
+            <h3>Enemy Fleet</h3>
+            <Board
+              player={phase === "playing" ? "Computer" : "None"}
+              boardInstance={computer.gameboard}
+              handleAllSunk={handleGameOver}
+            />
+          </div>
         </PlayerContext.Provider>
       </section>
     </>

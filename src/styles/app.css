@@ -12,9 +12,9 @@ header {
   margin-bottom: 20px;
 }
 
-.start {
+header button {
   background-color: rgb(36, 36, 36);
-  font-size: 20px;
+  font-size: 16px;
   font-weight: bolder;
   padding: 10px;
   border-radius: 8px;
@@ -22,15 +22,20 @@ header {
   transition: transform 0.2s ease;
 }
 
-.start:disabled {
+header div {
+  display: flex;
+  gap: 15px;
+}
+
+header button:disabled {
   cursor: default;
 }
 
-.start:enabled:hover {
+header button:enabled:hover {
   transform: scale(1.02);
 }
 
-.start:enabled:active {
+header button:enabled:active {
   transform: scale(0.98);
 }
 
