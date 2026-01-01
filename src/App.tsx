@@ -23,6 +23,7 @@ function App() {
     computer.gameboard.clear();
     computer.randomPopulate();
 
+    // Ensure board is populated if player did not populate
     if (player.gameboard.allShipsSunk()) {
       player.randomPopulate();
     }
@@ -85,29 +86,46 @@ function App() {
     }
   }, [currentPlayer, phase, player, computer]); // Depends really on currentPlayer; others just to ensure no misbehavior
 
-  console.log(refreshTrigger);
+  console.log(refreshTrigger); // Prevent TypeScript variable not used error
+
   return (
     <>
       <header>
         <h1>Battleship</h1>
         {phase === "setup" && (
           <div>
-            <button onClick={randomizePlayerBoard}>Randomize Ships</button>
-            <button onClick={startGame}>Start Game</button>
+            <button onClick={randomizePlayerBoard}>Randomize</button>
+            <button onClick={startGame}>Start</button>
           </div>
         )}
-        {phase === "playing" && <span>{currentPlayer === "Player" ? "You are attacking" : "Enemy is attacking"}</span>}
+        {phase === "playing" && (
+          <span>
+            {currentPlayer === "Player"
+              ? "You are attacking"
+              : "Enemy is attacking"}
+          </span>
+        )}
         {phase === "ended" && (
           <>
-            <h3>The {winner} wins!</h3>
-            <button onClick={() => setPhase("setup")}>New Game</button>
+            <h3>
+              {winner === "Player"
+                ? "You defeated the enemy!"
+                : "The enemy defeated you!"}
+            </h3>
+            <button onClick={() => setPhase("setup")}>Restart</button>
           </>
         )}
       </header>
       <section className="boards-container">
         <PlayerContext.Provider value={{ currentPlayer, setCurrentPlayer }}>
           <div className="board-wrapper">
-            <div className={`board-label left ${currentPlayer === "Player" ? "active" : ""}`}>YOUR FLEET</div>
+            <div
+              className={`board-label left ${
+                currentPlayer === "Player" ? "active" : ""
+              }`}
+            >
+              YOUR FLEET
+            </div>
             <Board
               player={phase === "playing" ? "Player" : "None"}
               boardInstance={player.gameboard}
@@ -115,7 +133,13 @@ function App() {
             />
           </div>
           <div className="board-wrapper">
-            <div className={`board-label right ${currentPlayer === "Computer" ? "active" : ""}`}>ENEMY WATERS</div>
+            <div
+              className={`board-label right ${
+                currentPlayer === "Computer" ? "active" : ""
+              }`}
+            >
+              ENEMY WATERS
+            </div>
             <Board
               player={phase === "playing" ? "Computer" : "None"}
               boardInstance={computer.gameboard}

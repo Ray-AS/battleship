@@ -8,11 +8,17 @@ interface cellProps {
   attack: (position: Position) => void;
 }
 
-export default function Cell({ state, position, disabled, hide, attack }: cellProps) {
+export default function Cell({
+  state,
+  position,
+  disabled,
+  hide,
+  attack,
+}: cellProps) {
   let value: string;
   let style: string = state;
 
-  // Determine display value based on cell state
+  // Determine display value and class name based on cell state
   switch (state) {
     case "empty":
       value = "·";
@@ -25,7 +31,7 @@ export default function Cell({ state, position, disabled, hide, attack }: cellPr
       break;
     case "ship":
       value = "=";
-      if(hide) { 
+      if (hide) {
         value = "·";
         style = "empty";
       }

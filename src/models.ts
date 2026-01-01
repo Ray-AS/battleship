@@ -24,6 +24,10 @@ export enum Outcome {
 
 export type PlayerType = "Player" | "Computer" | "None";
 
-export type BoardFunction = (length: number, position: Position, orientation: Orientation) => boolean;
+export type BoardFunction = (
+  length: number,
+  position: Position,
+  orientation: Orientation
+) => boolean;
 
 export type GamePhase = "setup" | "playing" | "ended";

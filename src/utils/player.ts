@@ -34,12 +34,12 @@ export class Player {
 
         orientation = ["horizontal", "vertical"][Math.floor(Math.random() * 2)] as Orientation;
 
-        if (!this.gameboard.isInBounds(SHIP_LENGTHS[i], {x, y}, orientation)) {
+        if (this.gameboard.isOutOfBounds(SHIP_LENGTHS[i], {x, y}, orientation)) {
           isValid = false;
           continue;
         }
 
-        if(!this.gameboard.isOccupied(SHIP_LENGTHS[i], {x, y}, orientation)) {
+        if(this.gameboard.isOccupied(SHIP_LENGTHS[i], {x, y}, orientation)) {
           isValid = false;
         }
       } while (!isValid);

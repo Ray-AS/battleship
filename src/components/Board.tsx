@@ -24,10 +24,11 @@ export default function Board({
     console.log(`Player attacking (${position.x}, ${position.y})`);
     const outcome = boardInstance.receiveAttack(position);
 
+    // Don't switch turns if attack is invalid
     if (outcome === Outcome.UNAVAILABLE) return;
 
     if (boardInstance.allShipsSunk()) {
-    handleAllSunk(player);
+      handleAllSunk(player);
     } else {
       setCurrentPlayer("Computer");
     }
@@ -49,6 +50,7 @@ export default function Board({
             position={position}
             // Only allow attacking on computer board
             disabled={player === currentPlayer || player === "Player"}
+            // Hide ships if board is computer
             hide={player === "Computer"}
             attack={attack}
           />

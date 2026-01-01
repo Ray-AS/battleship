@@ -1,9 +1,5 @@
 import { expect, test, describe } from "vitest";
-import {
-  Outcome,
-  type Position,
-  type Orientation,
-} from "../models";
+import { Outcome, type Position, type Orientation } from "../models";
 import { Gameboard } from "../utils/gameboard";
 
 describe("Gameboard class", () => {
