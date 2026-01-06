@@ -78,7 +78,7 @@ export class Computer extends Player {
       let placed = false;
 
       for (let attempts = 0; attempts < 50; attempts++) {
-        const orientation = ["horizontal", "vertical"][Math.floor(Math.random() * 2)] as Orientation;
+        const orientation: Orientation = Math.random() < 0.5 ? "horizontal" : "vertical";
         const position: Position = {
           x: Math.floor(Math.random() * DEFAULT_BOARD_SIZE),
           y: Math.floor(Math.random() * DEFAULT_BOARD_SIZE),

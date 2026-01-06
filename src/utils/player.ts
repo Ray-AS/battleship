@@ -38,7 +38,7 @@ export class Player {
         x = Math.floor(Math.random() * this.gameboard.board_size);
         y = Math.floor(Math.random() * this.gameboard.board_size);
 
-        orientation = ["horizontal", "vertical"][Math.floor(Math.random() * 2)] as Orientation;
+        orientation = Math.random() < 0.5 ? "horizontal" : "vertical";
 
         if (this.gameboard.isOutOfBounds(SHIPS[i].length, {x, y}, orientation)) {
           isValid = false;
