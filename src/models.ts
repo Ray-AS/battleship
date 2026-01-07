@@ -51,3 +51,5 @@ export interface ShipModel {
 }
 
 export type SimulationBoard = boolean[][];
+
+export type PlacementState = { index: number; orientation: Orientation } | null;

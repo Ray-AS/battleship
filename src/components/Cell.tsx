@@ -5,7 +5,7 @@ interface cellProps {
   position: Position;
   disabled: boolean;
   hide: boolean;
-  attack: (position: Position) => void;
+  interact: (position: Position) => void;
 }
 
 export default function Cell({
@@ -13,7 +13,7 @@ export default function Cell({
   position,
   disabled,
   hide,
-  attack,
+  interact,
 }: cellProps) {
   let value: string;
   let style: string = state;
@@ -44,7 +44,7 @@ export default function Cell({
   return (
     <button
       className={`cell ${style}`}
-      onClick={() => attack(position)}
+      onClick={() => interact(position)}
       disabled={disabled}
     >
       {value}

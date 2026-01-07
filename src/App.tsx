@@ -1,9 +1,15 @@
 import "./styles/app.css";
 import Board from "./components/Board";
-import { Player } from "./utils/player";
+import { Player, SHIPS } from "./utils/player";
 import { Computer } from "./utils/computer";
 import { useEffect, useState } from "react";
-import type { PlayerType, GamePhase } from "./models";
+import type {
+  PlayerType,
+  GamePhase,
+  PlacementState,
+  ShipModel,
+  Position,
+} from "./models";
 import { PlayerContext } from "./components/PlayerContext";
 
 function App() {
@@ -16,6 +22,36 @@ function App() {
 
   const [phase, setPhase] = useState<GamePhase>("setup");
   const [refreshTrigger, setRefreshTrigger] = useState(0);
+
+  const [placement, setPlacement] = useState<PlacementState>(null);
+
+  function startManualSetup() {
+    player.gameboard.clear();
+    setPlacement({ index: 0, orientation: "horizontal" });
+    setRefreshTrigger((prev) => prev + 1);
+  }
+
+  function handleCellClick(position: Position) {
+    if (phase !== "setup" || !placement) return;
+
+    const shipToPlace = SHIPS[placement.index];
+    const success = player.gameboard.placeShip(
+      shipToPlace as ShipModel,
+      position,
+      placement.orientation
+    );
+
+    if (success) {
+      if (placement.index < SHIPS.length - 1) {
+        setPlacement({ ...placement, index: placement.index + 1 });
+      } else {
+        setPlacement(null); // All ships placed!
+      }
+      setRefreshTrigger((prev) => prev + 1);
+    } else {
+      alert("Invalid placement! Ship overlaps or is out of bounds.");
+    }
+  }
 
   function startGame() {
     console.log("Starting game");
@@ -95,9 +131,43 @@ function App() {
       <header>
         <h1>Battleship</h1>
         {phase === "setup" && (
-          <div>
-            <button onClick={randomizePlayerBoard}>Randomize</button>
-            <button onClick={startGame}>Start</button>
+          <div className="setup">
+            {!placement ? (
+              <>
+                <button onClick={startManualSetup}>Manual</button>
+                <button onClick={randomizePlayerBoard}>Randomize</button>
+                <button onClick={startGame}>Start</button>
+              </>
+            ) : (
+              <div className="placement-info">
+                <p>
+                  Placing:{" "}
+                  <strong>{SHIPS[placement.index].model.toUpperCase()}</strong>{" "}
+                  (Length: {SHIPS[placement.index].length})
+                </p>
+                <button
+                  onClick={() =>
+                    setPlacement({
+                      ...placement,
+                      orientation:
+                        placement.orientation === "horizontal"
+                          ? "vertical"
+                          : "horizontal",
+                    })
+                  }
+                >
+                  {placement.orientation[0].toUpperCase() + placement.orientation.slice(1)}
+                </button>
+                <button 
+                  onClick={() => { 
+                    setPlacement(null);
+                    player.gameboard.clear();
+                  }}
+                >
+                  Cancel
+                </button>
+              </div>
+            )}
           </div>
         )}
         {phase === "playing" && (
@@ -143,7 +213,9 @@ function App() {
             <Board
               player={phase === "playing" ? "Player" : "None"}
               boardInstance={player.gameboard}
+              phase={phase}
               handleAllSunk={handleGameOver}
+              handlePlacement={placement ? handleCellClick : undefined}
             />
           </div>
           <div className="board-wrapper">
@@ -157,6 +229,7 @@ function App() {
             <Board
               player={phase === "playing" ? "Computer" : "None"}
               boardInstance={computer.gameboard}
+              phase={phase}
               handleAllSunk={handleGameOver}
             />
           </div>

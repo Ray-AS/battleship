@@ -45,6 +45,12 @@ header button:enabled:active {
   transform: scale(0.98);
 }
 
+.placement-info {
+  display: flex;
+  gap: 10px;
+  align-items: center;
+}
+
 .boards-container {
   display: flex;
   height: 70vh;
