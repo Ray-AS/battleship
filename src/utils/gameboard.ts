@@ -1,5 +1,5 @@
 import { DEFAULT_BOARD_SIZE } from "../configs";
-import { Outcome, type Board, type BoardFunction, type Orientation, type Position, type ShipModel } from "../models";
+import { Outcome, type AttackOutcome, type Board, type BoardFunction, type Orientation, type Position, type ShipModel } from "../models";
 import { Ship } from "./ship";
 
 export class Gameboard {
@@ -56,7 +56,7 @@ export class Gameboard {
     return true;
   }
 
-  receiveAttack(position: Position) {
+  receiveAttack(position: Position): AttackOutcome {
     // Prevent out of bounds attacks
     if (
       position.x < 0 ||
@@ -64,7 +64,9 @@ export class Gameboard {
       position.x >= this.board_size ||
       position.y >= this.board_size
     ) {
-      return Outcome.UNAVAILABLE;
+      return {
+        outcome: Outcome.UNAVAILABLE,
+      };
     }
 
     const cell = this._board[position.y][position.x];
@@ -72,11 +74,16 @@ export class Gameboard {
     if (cell.type === "ship") {
       cell.type = "hit";
       cell.value!.hit();
-      return Outcome.HIT;
+      return {
+        outcome: Outcome.HIT,
+        ship: cell.value!
+      };
     } else if (cell.type === "empty") {
       cell.type = "miss";
-      return Outcome.MISS;
-    } else return Outcome.UNAVAILABLE;
+      return {
+        outcome: Outcome.MISS
+      };
+    } else return { outcome: Outcome.UNAVAILABLE };
   }
 
   allShipsSunk() {

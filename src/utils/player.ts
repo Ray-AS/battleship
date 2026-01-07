@@ -2,11 +2,11 @@ import type { Orientation, ShipModel } from "../models";
 import { Gameboard } from "./gameboard";
 
 export const SHIPS = [
-  {ship: "carrier", length: 5},
-  {ship: "battleship", length: 4},
-  {ship: "cruiser", length: 3},
-  {ship: "submarine", length: 3},
-  {ship: "destroyer", length: 2},
+  {model: "carrier", length: 5},
+  {model: "battleship", length: 4},
+  {model: "cruiser", length: 3},
+  {model: "submarine", length: 3},
+  {model: "destroyer", length: 2},
 ] as const;
 
 export class Player {

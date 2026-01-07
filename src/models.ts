@@ -23,6 +23,11 @@ export enum Outcome {
   UNAVAILABLE,
 }
 
+export interface AttackOutcome {
+  outcome: Outcome
+  ship?: Ship
+}
+
 export type PlayerType = "Player" | "Computer" | "None";
 
 export type BoardFunction = (
@@ -33,11 +38,11 @@ export type BoardFunction = (
 
 export type GamePhase = "setup" | "playing" | "ended";
 
-type ShipName = typeof SHIPS[number]["ship"]
+type ShipName = typeof SHIPS[number]["model"]
 type ShipLength = typeof SHIPS[number]["length"]
 
 export interface ShipModel {
-  ship: ShipName
+  model: ShipName
   length: ShipLength
 }
 

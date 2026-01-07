@@ -1,5 +1,12 @@
 import { DEFAULT_BOARD_SIZE } from "../configs";
-import { Outcome, type Orientation, type Position, type ShipModel, type SimulationBoard } from "../models";
+import {
+  Outcome,
+  type AttackOutcome,
+  type Orientation,
+  type Position,
+  type ShipModel,
+  type SimulationBoard,
+} from "../models";
 import { Player, SHIPS } from "./player";
 
 export class Computer extends Player {
@@ -44,12 +51,8 @@ export class Computer extends Player {
       const x = orientation === "horizontal" ? position.x + i : position.x;
       const y = orientation === "vertical" ? position.y + i : position.y;
 
-      if (
-        x < 0 ||
-        y < 0 ||
-        x >= DEFAULT_BOARD_SIZE ||
-        y >= DEFAULT_BOARD_SIZE
-      ) return false;
+      if (x < 0 || y < 0 || x >= DEFAULT_BOARD_SIZE || y >= DEFAULT_BOARD_SIZE)
+        return false;
 
       if (this.knowledgeBoard[y][x] === "miss") return false;
       if (simulationBoard[y][x]) return false;
@@ -74,11 +77,13 @@ export class Computer extends Player {
   private runSingleSimulation(): SimulationBoard | null {
     const simulationBoard = this.createSimulationBoard();
 
+    // Randomly place each ship on simulation board
     for (const ship of this.remainingShips) {
       let placed = false;
 
       for (let attempts = 0; attempts < 50; attempts++) {
-        const orientation: Orientation = Math.random() < 0.5 ? "horizontal" : "vertical";
+        const orientation: Orientation =
+          Math.random() < 0.5 ? "horizontal" : "vertical";
         const position: Position = {
           x: Math.floor(Math.random() * DEFAULT_BOARD_SIZE),
           y: Math.floor(Math.random() * DEFAULT_BOARD_SIZE),
@@ -94,6 +99,15 @@ export class Computer extends Player {
       if (!placed) return null; // In case of infinite loop, return null if attempts > 50
     }
 
+    // Null the simulation board if known hit position does not have a ship on it
+    for (let y = 0; y < DEFAULT_BOARD_SIZE; y++) {
+      for (let x = 0; x < DEFAULT_BOARD_SIZE; x++) {
+        if (this.knowledgeBoard[y][x] === "hit" && !simulationBoard[y][x]) {
+          return null;
+        }
+      }
+    }
+
     return simulationBoard;
   }
 
@@ -103,14 +117,11 @@ export class Computer extends Player {
     for (let i = 0; i < simulationCount; i++) {
       const simulation = this.runSingleSimulation();
       if (!simulation) continue;
-      
+
       // Increment heatmap if simulation said ship can be found there and the position has not already been shot at
       for (let y = 0; y < DEFAULT_BOARD_SIZE; y++) {
         for (let x = 0; x < DEFAULT_BOARD_SIZE; x++) {
-          if (
-            simulation[y][x] &&
-            this.knowledgeBoard[y][x] === "unknown"
-          ) {
+          if (simulation[y][x] && this.knowledgeBoard[y][x] === "unknown") {
             heatmap[y][x]++;
           }
         }
@@ -120,9 +131,15 @@ export class Computer extends Player {
     return heatmap;
   }
 
-  registerOutcome(position: Position, outcome: Outcome) {
+  registerOutcome(position: Position, { outcome, ship }: AttackOutcome) {
     if (outcome === Outcome.HIT) {
       this.knowledgeBoard[position.y][position.x] = "hit";
+
+      if (ship) {
+        this.remainingShips = this.remainingShips.filter(
+          (s) => s.model !== ship.specs.model
+        );
+      }
     } else if (outcome === Outcome.MISS) {
       this.knowledgeBoard[position.y][position.x] = "miss";
     }
