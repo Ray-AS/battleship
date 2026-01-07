@@ -1,1 +1,1 @@
-export const DEFAULT_BOARD_SIZE: number = 10
+export const DEFAULT_BOARD_SIZE: number = 10;

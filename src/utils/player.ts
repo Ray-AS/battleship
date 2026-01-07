@@ -2,11 +2,11 @@ import type { Orientation, ShipModel } from "../models";
 import { Gameboard } from "./gameboard";
 
 export const SHIPS = [
-  {model: "carrier", length: 5},
-  {model: "battleship", length: 4},
-  {model: "cruiser", length: 3},
-  {model: "submarine", length: 3},
-  {model: "destroyer", length: 2},
+  { model: "carrier", length: 5 },
+  { model: "battleship", length: 4 },
+  { model: "cruiser", length: 3 },
+  { model: "submarine", length: 3 },
+  { model: "destroyer", length: 2 },
 ] as const;
 
 export class Player {
@@ -40,12 +40,14 @@ export class Player {
 
         orientation = Math.random() < 0.5 ? "horizontal" : "vertical";
 
-        if (this.gameboard.isOutOfBounds(SHIPS[i].length, {x, y}, orientation)) {
+        if (
+          this.gameboard.isOutOfBounds(SHIPS[i].length, { x, y }, orientation)
+        ) {
           isValid = false;
           continue;
         }
 
-        if(this.gameboard.isOccupied(SHIPS[i].length, {x, y}, orientation)) {
+        if (this.gameboard.isOccupied(SHIPS[i].length, { x, y }, orientation)) {
           isValid = false;
         }
       } while (!isValid);

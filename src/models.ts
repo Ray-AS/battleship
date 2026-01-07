@@ -24,11 +24,12 @@ export enum Outcome {
 }
 
 export interface AttackOutcome {
-  outcome: Outcome
+  outcome: Outcome;
   shipInfo?: {
-    model: ShipName
-    isSunk: boolean
-  }
+    model: ShipName;
+    isSunk: boolean;
+    positions?: Position[];
+  };
 }
 
 export type PlayerType = "Player" | "Computer" | "None";
@@ -41,12 +42,12 @@ export type BoardFunction = (
 
 export type GamePhase = "setup" | "playing" | "ended";
 
-type ShipName = typeof SHIPS[number]["model"]
-type ShipLength = typeof SHIPS[number]["length"]
+type ShipName = (typeof SHIPS)[number]["model"];
+type ShipLength = (typeof SHIPS)[number]["length"];
 
 export interface ShipModel {
-  model: ShipName
-  length: ShipLength
+  model: ShipName;
+  length: ShipLength;
 }
 
 export type SimulationBoard = boolean[][];

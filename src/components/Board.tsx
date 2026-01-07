@@ -22,10 +22,10 @@ export default function Board({
   // Update board instance and board state based on attacked cell position
   function attack(position: Position) {
     console.log(`Player attacking (${position.x}, ${position.y})`);
-    const outcome = boardInstance.receiveAttack(position);
+    const result = boardInstance.receiveAttack(position);
 
     // Don't switch turns if attack is invalid
-    if (outcome === Outcome.UNAVAILABLE) return;
+    if (result.outcome === Outcome.UNAVAILABLE) return;
 
     if (boardInstance.allShipsSunk()) {
       handleAllSunk(player);

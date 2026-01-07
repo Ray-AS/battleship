@@ -1,7 +1,7 @@
 import type { ShipModel } from "../models";
 
 export class Ship {
-  private _hits = 0
+  private _hits = 0;
   constructor(readonly specs: ShipModel) {}
 
   get length(): number {
