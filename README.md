@@ -1,6 +1,6 @@
 # Battleship
 
-A fully interactive Battleship game built with React and TypeScript. Play against a simple computer AI that randomly places ships and attacks your board. Features include random board population, turn-based gameplay, and game state management.
+A fully interactive Battleship game built with React and TypeScript. Play against a smart computer AI uses simulations to attack the player. Features include manual or random board population, turn-based gameplay, and game state management.
 
 ## Demo
 
@@ -10,11 +10,11 @@ A fully interactive Battleship game built with React and TypeScript. Play agains
 
 ## Features
 
-- Place and randomize your fleet before starting the game.
-- Turn-based gameplay with computer AI.
-- Visual feedback for hits, misses, and ship positions.
-- Detects when all ships are sunk and announces the winner.
-- Supports restarting the game without refreshing the page.
+- <strong>Interactive Grid:</strong> Place ships manually or automatically populate your board
+- <strong>Hovering Preview:</strong> Hover over cells to preview ship placement and its validity
+- <strong>AI Opponent:</strong> Smart computer player with probabilistic attack strategy using heatmaps and simulation
+- <strong>Game Phases:</strong> Setup, playing, and end game states handled dynamically
+- <strong>Real-time Feedback:</strong> Visual cues for hits, misses, and sunk ships
 
 ## Languages & Libraries
 
@@ -32,7 +32,7 @@ A fully interactive Battleship game built with React and TypeScript. Play agains
 
 ### Installation & Launching
 
-``` bash
+```bash
 git clone git@github.com:Ray-AS/battleship.git
 cd battleship
 npm install
@@ -43,18 +43,35 @@ View at <http://localhost:5173>
 
 ### Running Tests
 
-``` bash
+```bash
 npm run test
 ```
 
 ## Gameplay
 
-1. Click Randomize to place your ships randomly (Optional)
-2. Click Start to begin the game.
-3. Take turns attacking the enemy’s board.
-4. Hits are marked with ×, misses with -.
-5. The game ends when all ships of one player are sunk.
-6. Click Restart to start a new game.
+1. <strong>Setup</strong>
+
+   - Click Manual to place ships one by one
+   - Hover over the grid to preview placement
+   - Use the orientation button to rotate the ship
+   - Click Randomize to automatically place all ships
+   - Click Start to begin the game
+
+2. <strong>Playing</strong>
+
+   - Click on the enemy grid to attack
+   - Wait for the AI to take its turn after yours
+
+3. <strong>End</strong>
+   - A winner is announced
+   - Click Restart to play again
+
+## AI Strategy
+
+- <strong>Tracks Board State:</strong> Keeps track of hits, misses, and sunk ships to avoid attacking the same positions twice
+- <strong>Heatmap Simulations:</strong> Runs multiple simulations of all possible placements for remaining ships, generating a probability map to identify the most likely positions for ships.
+- <strong>Adaptive Targeting:</strong> Focuses attacks around known hits to efficiently sink ships and updates its strategy dynamically as ships are sunk
+- <strong>Randomized Fallback:</strong> If no high-probability targets are available, it selects from remaining unknown cells, adding unpredictability and making gameplay feel natural
 
 ## Test-Driven Development
 
@@ -67,10 +84,7 @@ npm run test
 
 ## Future Updates
 
-- Improved computer AI for ship targeting
-- Drag-and-drop ship placement
-- Responsive, mobile-friendly layout
-- Animations and sound effects
-- Persistent storage using database
-- User accounts and authentication
-- Multiplayer support using Websockets
+- Drag-and-drop placement
+- Multiplayer mode for online battles
+- Sound effects and animations
+- AI difficulty levels
