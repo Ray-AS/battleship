@@ -16,7 +16,7 @@ A fully interactive Battleship game built with React and TypeScript. Play agains
 - <strong>Game Phases:</strong> Setup, playing, and end game states handled dynamically
 - <strong>Real-time Feedback:</strong> Visual cues for hits, misses, and sunk ships
 
-## Languages & Libraries
+## Tech Stack
 
 - TypeScript for type safety
 - React for UI components
