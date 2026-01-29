@@ -1,6 +1,8 @@
-# Battleship
+# Battleship (LEGACY)
 
 A fully interactive Battleship game built with React and TypeScript. Play against a smart computer AI uses simulations to attack the player. Features include manual or random board population, turn-based gameplay, and game state management.
+
+**FIND UPDATED BATTLESHIP HERE:** [Battleship Multiplayer](https://github.com/Ray-AS/battleship-multiplayer)
 
 ## Demo
 
